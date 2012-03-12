@@ -8,12 +8,15 @@ Last update: 20 October 2009
 This code is free to use. 
  
 */
+
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Web;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Reflection;
+using System.Threading;
+using System.Web;
 
 namespace Camelonta.CMS.WebControls
 {
@@ -35,11 +38,11 @@ namespace Camelonta.CMS.WebControls
                     letter.Add(ltr);
                     int space = (new Random()).Next(5) + 1;
                     ltr.space = space;
-                    System.Threading.Thread.Sleep(1);
+                    Thread.Sleep(1);
                     TotalWidth += ltr.LetterSize.Width + space;
                     if (MaxHeight < ltr.LetterSize.Height)
                         MaxHeight = ltr.LetterSize.Height;
-                    System.Threading.Thread.Sleep(1);
+                    Thread.Sleep(1);
                 }
                 const int HMargin = 5;
                 const int VMargin = 3;
@@ -55,7 +58,7 @@ namespace Camelonta.CMS.WebControls
                     xPos += ltr.LetterSize.Width + ltr.space;
                 }
 
-                bmp.Save(context.Response.OutputStream, System.Drawing.Imaging.ImageFormat.Jpeg);
+                bmp.Save(context.Response.OutputStream, ImageFormat.Jpeg);
             }
         }
 
@@ -75,7 +78,7 @@ namespace Camelonta.CMS.WebControls
 
         public System.Drawing.Image GetBackground()
         {
-            System.Drawing.Imaging.ImageFormat imgFormat = System.Drawing.Imaging.ImageFormat.Png;
+            ImageFormat imgFormat = ImageFormat.Png;
 
             Assembly assembly = Assembly.GetExecutingAssembly();
             Stream stream = assembly.GetManifestResourceStream("Camelonta.CMS.WebControls.Captcha.background.png");

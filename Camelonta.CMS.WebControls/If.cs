@@ -1,15 +1,17 @@
 ﻿using System;
+using System.Data;
+using System.Linq;
+using System.Web.UI;
 using System.Web.UI.WebControls;
 using Camelonta.CMS.FrameWork;
-using System.Xml;
-using System.Data;
-using System.Collections.Generic;
-using System.Web;
-using System.Linq;
+using Camelonta.CMS.Web.BaseControls;
 
 namespace Camelonta.CMS.WebControls
 {
-    public class If : Camelonta.CMS.Web.BaseControls.BaseControl
+    /// <summary>
+    /// Shows or hides content depending on the values of the properties.
+    /// </summary>
+    public class If : BaseControl
     {
         private string _ValueIsNotEmpty;
         public string ValueIsNotEmpty
@@ -103,15 +105,33 @@ namespace Camelonta.CMS.WebControls
             set { _ContextSensitive = value; }
         }
 
-        private bool _hideControls = false;
-        private Camelonta.CMS.FrameWork.PageData _pageData;
+        protected bool _hideControls;
+        private PageData _pageData;
+
+        protected override void OnInit(EventArgs e)
+        {
+            // Current ElementName in a Foreach is this value
+            if (_CurrentElementName != null)
+            {
+                if (this.Parent.GetType().ToString() == "System.Web.UI.WebControls.RepeaterItem")
+                {
+                    RepeaterItem parentItem = (RepeaterItem)this.Parent;
+                    DataRowView row = (DataRowView)parentItem.DataItem;
+                    if (row != null)
+                        if (_CurrentElementName != row["ElementName"].ToString())
+                            _hideControls = true;
+                }
+            }
+
+            base.OnInit(e);
+        }
 
         public override void DataBind()
         {
             if (_ContextSensitive)
             {
                 // Override content with current context-page from repeater
-                System.Web.UI.Control controlItem = Globals.GetFirstParentControlOfType(this, "System.Web.UI.WebControls.RepeaterItem");
+                Control controlItem = Globals.GetFirstParentControlOfType(this, "System.Web.UI.WebControls.RepeaterItem");
                 if (controlItem != null)
                 {
                     RepeaterItem repeaterItem = (RepeaterItem)controlItem;
@@ -120,6 +140,7 @@ namespace Camelonta.CMS.WebControls
                 }
             }
 
+            // Set PageData if is has not yet been set
             if (_pageData == null)
                 _pageData = CMS.Context.PageData;
 
@@ -128,6 +149,10 @@ namespace Camelonta.CMS.WebControls
 
         protected override void OnLoad(EventArgs e)
         {
+            // Set PageData if is has not yet been set
+            if (_pageData == null)
+                _pageData = CMS.Context.PageData;
+
             Int32 countProperties = 0;
 
             if (_ValueIsNotEmpty != null)
@@ -155,13 +180,8 @@ namespace Camelonta.CMS.WebControls
             if (_Browser != null)
                 countProperties++;
 
-            /*
-             * Removed this check because when using "Visible" we don't want anything more...
-             * if (countProperties == 0)
-                throw new System.Exception("If-control \"" + this.ID + "\" in \"" + this.Parent.ID + "\" must have at least one statement");*/
-
             if (countProperties > 1)
-                throw new System.Exception("If-control " + this.ID + " in \"" + this.Parent.ID + "\" cannot have more than one statement");
+                throw new Exception("If-control " + this.ID + " in \"" + this.Parent.ID + "\" cannot have more than one statement");
 
 
             // Any value is not empty
@@ -283,180 +303,19 @@ namespace Camelonta.CMS.WebControls
             // Browser
             if (!String.IsNullOrEmpty(_Browser))
             {
-                string[] browsers = SplitParameters(_Browser);
-                bool and = false;
-                if (_Browser.Contains("&&"))
-                    and = true;
-
-                bool hide = false;
-
-                string client = CMS.Browser.BrowserName;
-
-
-                bool showControls = false;
-                foreach (string browser in browsers)
-                {
-                    if (browser == "ie") //Check for IE
-                        if (client == "ie" && !hide)
-                            showControls = true;
-                        else if (and)
-                        {
-                            showControls = false;
-                            hide = true;
-                        }
-                    if (browser == "!ie") //Check for NOT IE
-                        if (client != "ie" && !hide)
-                            showControls = true;
-                        else if (and)
-                        {
-                            showControls = false;
-                            hide = true;
-                        }
-
-                    if (browser == "ie6") //Check for IE6
-                        if (client == "ie" && CMS.Browser.MajorVersion == 6 && !hide)
-                            showControls = true;
-                        else if (and)
-                        {
-                            showControls = false;
-                            hide = true;
-                        }
-                    if (browser == "!ie6") //Check for NOT IE6
-                        if ((client != "ie" || CMS.Browser.MajorVersion != 6) && !hide)
-                            showControls = true;
-                        else if (and)
-                        {
-                            showControls = false;
-                            hide = true;
-                        }
-
-                    if (browser == "ie7") //Check for IE7
-                        if (client == "ie" && CMS.Browser.MajorVersion == 7 && !hide)
-                            showControls = true;
-                        else if (and)
-                        {
-                            showControls = false;
-                            hide = true;
-                        }
-                    if (browser == "!ie7") //Check for NOT IE7
-                        if ((client != "ie" || CMS.Browser.MajorVersion != 7) && !hide)
-                            showControls = true;
-                        else if (and)
-                        {
-                            showControls = false;
-                            hide = true;
-                        }
-
-                    if (browser == "firefox") //Check for Firefox
-                        if (client == "firefox" && !hide)
-                            showControls = true;
-                        else if (and)
-                        {
-                            showControls = false;
-                            hide = true;
-                        }
-                    if (browser == "!firefox") //Check for NOT Firefox
-                        if (client != "firefox" && !hide)
-                            showControls = true;
-                        else if (and)
-                        {
-                            showControls = false;
-                            hide = true;
-                        }
-
-                    if (browser == "opera") //Check for Opera
-                        if (client == "opera" && !hide)
-                            showControls = true;
-                        else if (and)
-                        {
-                            showControls = false;
-                            hide = true;
-                        }
-                    if (browser == "!opera") //Check for NOT Opera
-                        if (client != "opera" && !hide)
-                            showControls = true;
-                        else if (and)
-                        {
-                            showControls = false;
-                            hide = true;
-                        }
-
-                    if (browser == "chrome") //Check for Chrome
-                        if (client == "chrome" && !hide)
-                            showControls = true;
-                        else if (and)
-                        {
-                            showControls = false;
-                            hide = true;
-                        }
-                    if (browser == "!chrome") //Check for NOT Chrome
-                        if (client != "chrome" && !hide)
-                            showControls = true;
-                        else if (and)
-                        {
-                            showControls = false;
-                            hide = true;
-                        }
-
-                    if (browser == "safari") //Check for Safari
-                        if (client == "safari" && !hide)
-                            showControls = true;
-                        else if (and)
-                        {
-                            showControls = false;
-                            hide = true;
-                        }
-                    if (browser == "!safari") //Check for NOT Safari
-                        if (client != "safari" && !hide)
-                            showControls = true;
-                        else if (and)
-                        {
-                            showControls = false;
-                            hide = true;
-                        }
-
-                    if (browser == "mobileview") //Check for mobile device (respects the 'IsNotMobile' cookie)
-                        if (CMS.Browser.IsMobile && !hide)
-                            showControls = true;
-                        else if (and)
-                        {
-                            showControls = false;
-                            hide = true;
-                        }
-                    if (browser == "!mobileview") //Check for NOT mobile device (respects the 'IsNotMobile' cookie)
-                        if (!CMS.Browser.IsMobile && !hide)
-                            showControls = true;
-                        else if (and)
-                        {
-                            showControls = false;
-                            hide = true;
-                        }
-
-                    if (browser == "mobile") //Check for mobile device
-                        if (CMS.Browser.IsMobileNoCookie && !hide)
-                            showControls = true;
-                        else if (and)
-                        {
-                            showControls = false;
-                            hide = true;
-                        }
-                    if (browser == "!mobile") //Check for NOT mobile device
-                        if (!CMS.Browser.IsMobileNoCookie && !hide)
-                            showControls = true;
-                        else if (and)
-                        {
-                            showControls = false;
-                            hide = true;
-                        }
-
-                }
+                var showControls = CheckBroswerProperty();
                 _hideControls = !showControls;
             }
 
+            base.OnLoad(e);
+        }
+
+        protected override void Render(HtmlTextWriter writer)
+        {
             // Hide controls
             HideControls();
 
-            base.OnLoad(e);
+            base.Render(writer);
         }
 
         /// <summary>
@@ -469,14 +328,14 @@ namespace Camelonta.CMS.WebControls
             string[] parameters;
 
             if (parameter.Contains(","))
-                parameters = parameter.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+                parameters = parameter.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
             else if (parameter.Contains("||"))
-                parameters = parameter.Split(new string[] { "||" }, StringSplitOptions.RemoveEmptyEntries);
+                parameters = parameter.Split(new[] { "||" }, StringSplitOptions.RemoveEmptyEntries);
             else if (parameter.Contains("&&"))
-                parameters = parameter.Split(new string[] { "&&" }, StringSplitOptions.RemoveEmptyEntries);
+                parameters = parameter.Split(new[] { "&&" }, StringSplitOptions.RemoveEmptyEntries);
             else
             {
-                parameters = new string[] { parameter };
+                parameters = new[] { parameter };
             }
 
             for (int i = 0; i < parameters.Length; i++)
@@ -487,26 +346,6 @@ namespace Camelonta.CMS.WebControls
             return parameters;
         }
 
-        protected override void OnInit(EventArgs e)
-        {
-            // Current ElementName in a Foreach is this value
-            if (_CurrentElementName != null)
-            {
-                if (this.Parent.GetType().ToString() == "System.Web.UI.WebControls.RepeaterItem")
-                {
-                    RepeaterItem parentItem = (RepeaterItem)this.Parent;
-                    DataRowView row = (DataRowView)parentItem.DataItem;
-                    if (row != null)
-                        if (_CurrentElementName != row["ElementName"].ToString())
-                            _hideControls = true;
-                }
-            }
-
-            // Hide controls
-            HideControls();
-
-            base.OnInit(e);
-        }
 
         private void HideControls()
         {
@@ -520,6 +359,177 @@ namespace Camelonta.CMS.WebControls
                 }
                 catch { }
             }
+        }
+
+        private bool CheckBroswerProperty()
+        {
+            string[] browsers = SplitParameters(_Browser);
+            bool and = false;
+            if (_Browser.Contains("&&"))
+                and = true;
+
+            bool hide = false;
+
+            string client = CMS.Browser.BrowserName;
+
+
+            bool showControls = false;
+            foreach (string browser in browsers)
+            {
+                if (browser == "ie") //Check for IE
+                    if (client == "ie" && !hide)
+                        showControls = true;
+                    else if (and)
+                    {
+                        showControls = false;
+                        hide = true;
+                    }
+                if (browser == "!ie") //Check for NOT IE
+                    if (client != "ie" && !hide)
+                        showControls = true;
+                    else if (and)
+                    {
+                        showControls = false;
+                        hide = true;
+                    }
+
+                if (browser == "ie6") //Check for IE6
+                    if (client == "ie" && CMS.Browser.MajorVersion == 6 && !hide)
+                        showControls = true;
+                    else if (and)
+                    {
+                        showControls = false;
+                        hide = true;
+                    }
+                if (browser == "!ie6") //Check for NOT IE6
+                    if ((client != "ie" || CMS.Browser.MajorVersion != 6) && !hide)
+                        showControls = true;
+                    else if (and)
+                    {
+                        showControls = false;
+                        hide = true;
+                    }
+
+                if (browser == "ie7") //Check for IE7
+                    if (client == "ie" && CMS.Browser.MajorVersion == 7 && !hide)
+                        showControls = true;
+                    else if (and)
+                    {
+                        showControls = false;
+                        hide = true;
+                    }
+                if (browser == "!ie7") //Check for NOT IE7
+                    if ((client != "ie" || CMS.Browser.MajorVersion != 7) && !hide)
+                        showControls = true;
+                    else if (and)
+                    {
+                        showControls = false;
+                        hide = true;
+                    }
+
+                if (browser == "firefox") //Check for Firefox
+                    if (client == "firefox" && !hide)
+                        showControls = true;
+                    else if (and)
+                    {
+                        showControls = false;
+                        hide = true;
+                    }
+                if (browser == "!firefox") //Check for NOT Firefox
+                    if (client != "firefox" && !hide)
+                        showControls = true;
+                    else if (and)
+                    {
+                        showControls = false;
+                        hide = true;
+                    }
+
+                if (browser == "opera") //Check for Opera
+                    if (client == "opera" && !hide)
+                        showControls = true;
+                    else if (and)
+                    {
+                        showControls = false;
+                        hide = true;
+                    }
+                if (browser == "!opera") //Check for NOT Opera
+                    if (client != "opera" && !hide)
+                        showControls = true;
+                    else if (and)
+                    {
+                        showControls = false;
+                        hide = true;
+                    }
+
+                if (browser == "chrome") //Check for Chrome
+                    if (client == "chrome" && !hide)
+                        showControls = true;
+                    else if (and)
+                    {
+                        showControls = false;
+                        hide = true;
+                    }
+                if (browser == "!chrome") //Check for NOT Chrome
+                    if (client != "chrome" && !hide)
+                        showControls = true;
+                    else if (and)
+                    {
+                        showControls = false;
+                        hide = true;
+                    }
+
+                if (browser == "safari") //Check for Safari
+                    if (client == "safari" && !hide)
+                        showControls = true;
+                    else if (and)
+                    {
+                        showControls = false;
+                        hide = true;
+                    }
+                if (browser == "!safari") //Check for NOT Safari
+                    if (client != "safari" && !hide)
+                        showControls = true;
+                    else if (and)
+                    {
+                        showControls = false;
+                        hide = true;
+                    }
+
+                if (browser == "mobileview") //Check for mobile device (respects the 'IsNotMobile' cookie)
+                    if (CMS.Browser.IsMobile && !hide)
+                        showControls = true;
+                    else if (and)
+                    {
+                        showControls = false;
+                        hide = true;
+                    }
+                if (browser == "!mobileview") //Check for NOT mobile device (respects the 'IsNotMobile' cookie)
+                    if (!CMS.Browser.IsMobile && !hide)
+                        showControls = true;
+                    else if (and)
+                    {
+                        showControls = false;
+                        hide = true;
+                    }
+
+                if (browser == "mobile") //Check for mobile device
+                    if (CMS.Browser.IsMobileNoCookie && !hide)
+                        showControls = true;
+                    else if (and)
+                    {
+                        showControls = false;
+                        hide = true;
+                    }
+                if (browser == "!mobile") //Check for NOT mobile device
+                    if (!CMS.Browser.IsMobileNoCookie && !hide)
+                        showControls = true;
+                    else if (and)
+                    {
+                        showControls = false;
+                        hide = true;
+                    }
+            }
+            return showControls;
         }
     }
 }

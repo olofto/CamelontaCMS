@@ -2,10 +2,14 @@
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Camelonta.CMS.FrameWork;
+using Camelonta.CMS.Web.BaseControls;
 
 namespace Camelonta.CMS.WebControls
 {
-    public class Image : Camelonta.CMS.Web.BaseControls.BaseControl
+    /// <summary>
+    /// Renders an img-tag
+    /// </summary>
+    public class Image : BaseControl
     {
         public Image()
         {
@@ -23,7 +27,7 @@ namespace Camelonta.CMS.WebControls
             set { _Filename = value; }
         }
 
-        private bool _Crop = false;
+        private bool _Crop;
         public bool Crop
         {
             get { return _Crop; }
@@ -61,7 +65,7 @@ namespace Camelonta.CMS.WebControls
             set { _FilenameProperty = value; }
         }
 
-        private bool _RecursiveFilenameProperty = false;
+        private bool _RecursiveFilenameProperty;
         public bool RecursiveFilenameProperty
         {
             get { return _RecursiveFilenameProperty; }
@@ -138,7 +142,7 @@ namespace Camelonta.CMS.WebControls
             set { _AltProperty = value; }
         }
 
-        private bool _RecursiveAltProperty = false;
+        private bool _RecursiveAltProperty;
         public bool RecursiveAltProperty
         {
             get { return _RecursiveAltProperty; }
@@ -159,7 +163,7 @@ namespace Camelonta.CMS.WebControls
             set { _TitleProperty = value; }
         }
 
-        private bool _RecursiveTitleProperty = false;
+        private bool _RecursiveTitleProperty;
         public bool RecursiveTitleProperty
         {
             get { return _RecursiveTitleProperty; }
@@ -180,7 +184,7 @@ namespace Camelonta.CMS.WebControls
             set { _PageLinkProperty = value; }
         }
 
-        private bool _RecursivePageLinkProperty = false;
+        private bool _RecursivePageLinkProperty;
         public bool RecursivePageLinkProperty
         {
             get { return _RecursivePageLinkProperty; }

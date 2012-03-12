@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Web.UI;
 using Camelonta.CMS.Web.BaseControls;
 
 namespace Camelonta.CMS.WebControls
@@ -56,7 +54,7 @@ namespace Camelonta.CMS.WebControls
             set { _CssClass = value; }
         }
 
-        protected override void Render(System.Web.UI.HtmlTextWriter writer)
+        protected override void Render(HtmlTextWriter writer)
         {
             if (!String.IsNullOrEmpty(_LinkPublicationProperty))
                 _Link = CMS.Context.GetPublicationProperty(_LinkPublicationProperty);

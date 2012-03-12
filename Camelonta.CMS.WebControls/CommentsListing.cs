@@ -4,6 +4,9 @@ using Camelonta.CMS.Web.BaseControls;
 
 namespace Camelonta.CMS.WebControls
 {
+    /// <summary>
+    /// Simple listing of the comments of current page
+    /// </summary>
     public class CommentsListing  : Repeater
     {
         private Int32 _Limit = -1;

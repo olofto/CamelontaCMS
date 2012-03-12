@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Web;
+using System.Web.UI;
 using System.Web.UI.WebControls;
-using Camelonta.CMS.FrameWork;
-using Camelonta.CMS.FrameWork.Extensions;
-using System.Web.Security;
 using System.Xml;
+using Camelonta.CMS.FrameWork;
+using Camelonta.CMS.Web.BaseControls;
 
 namespace Camelonta.CMS.WebControls
 {
-    public class Property : Camelonta.CMS.Web.BaseControls.BaseControl
+    /// <summary>
+    /// Will return the content property defined in the PropertyName
+    /// </summary>
+    public class Property : BaseControl
     {
         private string _PropertyName;
         public string PropertyName
@@ -24,7 +27,7 @@ namespace Camelonta.CMS.WebControls
             set { _AllowOnPageEditing = value; }
         }
 
-        private bool _Recursive = false;
+        private bool _Recursive;
         public bool Recursive
         {
             get { return _Recursive; }
@@ -52,7 +55,7 @@ namespace Camelonta.CMS.WebControls
             if (_ContextSensitive)
             {
                 // Override content with current context-PageData from repeater
-                System.Web.UI.Control controlItem = Globals.GetFirstParentControlOfType(this, "System.Web.UI.WebControls.RepeaterItem");
+                Control controlItem = Globals.GetFirstParentControlOfType(this, "System.Web.UI.WebControls.RepeaterItem");
                 if (controlItem != null)
                 {
                     RepeaterItem repeaterItem = (RepeaterItem)controlItem;
@@ -128,7 +131,7 @@ namespace Camelonta.CMS.WebControls
             }
         }
 
-        protected override void Render(System.Web.UI.HtmlTextWriter writer)
+        protected override void Render(HtmlTextWriter writer)
         {
             string content = CMS.GetPageProperty(_pageData, _PropertyName, _Recursive, _Default);
 

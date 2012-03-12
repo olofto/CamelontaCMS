@@ -8,6 +8,7 @@ Last update: 20 October 2009
 This code is free to use. 
  
 */
+
 using System;
 using System.IO;
 using System.Security.Cryptography;

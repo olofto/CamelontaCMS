@@ -7,7 +7,7 @@ using System.Linq;
 /// </summary>
 public class Letter
 {
-    string[] ValidFonts = { "Segoe Script", "Century", "Eccentric Std", "Freestyle Script", "Viner Hand ITC" };
+    readonly string[] ValidFonts = { "Segoe Script", "Century", "Eccentric Std", "Freestyle Script", "Viner Hand ITC" };
     public Letter(char c)
     {
         Random rnd = new Random();

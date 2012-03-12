@@ -6,16 +6,18 @@ Last update: 20 October 2009
 
 This code is free to use. 
 */
+
 using System;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Camelonta.CMS.Web.BaseControls;
 
 namespace Camelonta.CMS.WebControls
 {
 
-    public class Captcha : Camelonta.CMS.Web.BaseControls.BaseUserControl
+    public class Captcha : BaseUserControl
     {
         private string _TryDifferentText;
         public string TryDifferentText
@@ -44,14 +46,14 @@ namespace Camelonta.CMS.WebControls
             this.EnableViewState = true; // this control required ViewState.
         }
 
-        System.Web.UI.WebControls.Image imgCaptcha = new System.Web.UI.WebControls.Image();
-        LinkButton btnTryNewWords = new LinkButton();
-        TextBox txtCpatcha = new TextBox();
+        readonly System.Web.UI.WebControls.Image imgCaptcha = new System.Web.UI.WebControls.Image();
+        readonly LinkButton btnTryNewWords = new LinkButton();
+        readonly TextBox txtCpatcha = new TextBox();
 
         protected override void CreateChildControls()
         {
             this.EnableViewState = true;
-            btnTryNewWords.Click += new EventHandler(btnTryNewWords_Click);
+            btnTryNewWords.Click += btnTryNewWords_Click;
             btnTryNewWords.Text = TryDifferentText;
 
             this.Controls.Add(txtCpatcha);
@@ -67,7 +69,7 @@ namespace Camelonta.CMS.WebControls
             base.CreateChildControls();
         }
 
-        protected override void Render(System.Web.UI.HtmlTextWriter writer)
+        protected override void Render(HtmlTextWriter writer)
         {
             if (IsPostBack)
                 txtCpatcha.Text = "";

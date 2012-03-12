@@ -202,9 +202,9 @@ namespace Camelonta.CMS.WebControls
 
 
 
-        ///// <summary>
-        /////  Send passwordlink
-        ///// </summary>
+        /// <summary>
+        ///  Send passwordlink
+        /// </summary>
         protected void GetPasswordForm_Click(object sender, EventArgs e)
         {
             TextBox tbUserName = (TextBox)GetPasswordForm.FindControl("tbGetUsername");
@@ -257,9 +257,9 @@ namespace Camelonta.CMS.WebControls
             base.Controls.Add(GetPasswordForm);
         }
 
-        ///// <summary>
-        ///// Form for setting new password
-        ///// </summary>
+        /// <summary>
+        /// Form for setting new password
+        /// </summary>
         protected void SetPasswordForm_Click(object sender, EventArgs e)
         {
             string username = Page.Request.QueryString["username"];

@@ -9,6 +9,9 @@ using Camelonta.CMS.Web.BaseControls;
 
 namespace Camelonta.CMS.WebControls
 {
+    /// <summary>
+    /// Iterates over a series of Custom Page Properties on a page
+    /// </summary>
     public class Foreach : Repeater
     {
         private Int32 _PageNodeID;

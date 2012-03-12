@@ -1,15 +1,16 @@
 ﻿using System;
+using System.Web.UI;
 using Camelonta.CMS.FrameWork;
+using Camelonta.CMS.Web.BaseControls;
 using Camelonta.CMS.Web.BaseControls.HttpHandlers;
 
 namespace Camelonta.CMS.WebControls
 {
-    public class Combiner : Camelonta.CMS.Web.BaseControls.BaseControl
+    /// <summary>
+    /// Combines and compresses CSS/JS-files
+    /// </summary>
+    public class Combiner : BaseControl
     {
-        public Combiner()
-        {
-        }
-
         private string _Type;
         public string Type
         {
@@ -52,13 +53,13 @@ namespace Camelonta.CMS.WebControls
             set { _Enabled = value; }
         }
 
-        protected override void Render(System.Web.UI.HtmlTextWriter writer)
+        protected override void Render(HtmlTextWriter writer)
         {
             if (_Type != "text/css" && _Type != "text/javascript")
-                throw new System.Exception("Combiner: Type have to be text/javascript or text/css");
+                throw new Exception("Combiner: Type have to be text/javascript or text/css");
 
             if (String.IsNullOrEmpty(_Files))
-                throw new System.Exception("Combiner: Files must be set to a list of files");
+                throw new Exception("Combiner: Files must be set to a list of files");
 
             string cssHtml = "<link href=\"{0}\" rel=\"stylesheet\" type=\"{1}\" media=\"{2}\" />";
             string jsHtml = "<script src=\"{0}\" type=\"{1}\"></script>";
@@ -78,7 +79,7 @@ namespace Camelonta.CMS.WebControls
             {
                 /* Write files as seperate tags to simulate "normal" use for debug */
                 string url = "";
-                string[] fileNames = _Files.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                string[] fileNames = _Files.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
                 foreach (string fileName in fileNames)
                 {

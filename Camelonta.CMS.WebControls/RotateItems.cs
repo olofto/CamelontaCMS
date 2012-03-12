@@ -1,10 +1,6 @@
 using System;
 using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 using System.Xml;
-using System.Xml.XPath;
-using System.Xml.Xsl;
 using Camelonta.CMS.FrameWork;
 
 namespace Camelonta.CMS.WebControls
@@ -31,12 +27,7 @@ namespace Camelonta.CMS.WebControls
 		}
 
 
-		public RotateItems()
-		{
-			
-		}
-
-		protected override void OnPreRender(EventArgs e)
+	    protected override void OnPreRender(EventArgs e)
 		{
 
 			XmlNodeList nl = XmlDoc.DocumentElement.SelectNodes(_NodeSet);
@@ -58,9 +49,9 @@ namespace Camelonta.CMS.WebControls
 						Logger.Debug("RotateItems: Read CurrentUserIndex OK " + currentUserIndex);
 					}
 				}
-				catch(System.Exception ex)
+				catch(Exception ex)
 				{
-					Logger.Error("RotateItems: Error: " + ex.Message.ToString());
+					Logger.Error("RotateItems: Error: " + ex.Message);
 				}
                 _XslParams.AddParam("Index", "", currentUserIndex.ToString());
 				if(currentUserIndex < maxCount)
